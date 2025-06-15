@@ -1,11 +1,20 @@
 import 'dart:collection';
-
+// import 'dart:convert' as convert;
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+// import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:todoapp/authentication_firebase/auth_login_view.dart';
+import 'package:todoapp/authentication_firebase/auth_register_view.dart';
 import 'package:todoapp/views/personal_view.dart';
 import 'package:todoapp/writingView/write_personal.dart';
-void main() {
+import 'package:firebase_auth/firebase_auth.dart'
+    show FirebaseAuth;
+void main(){
+  WidgetsFlutterBinding.ensureInitialized();
+   
   runApp(
     ChangeNotifierProvider(
       create: (context) =>PersonalNoteProvider(),
@@ -28,14 +37,50 @@ class RootAPP extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 255, 171, 16),
         ),
       ),
-      home: MyApp(),
+      home:MainAppControlView(),
       routes: {
         '/personalView': (context) => PersonalView(),
-         '/writePersonal':(context)=> WritePersonal()
+         '/writePersonal':(context)=> WritePersonal(),
+         '/registerViewRoute':(context)=>AuthRegisterView(),
+         '/loginViewRoute':(context)=>AuthLoginView(),
+         '/myAppViewRoute':(context)=>MyApp()
         },
     );
   }
 }
+
+
+class MainAppControlView extends StatelessWidget {
+  const MainAppControlView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ),
+      builder: (context, snapshot) {
+        switch(snapshot.connectionState){
+          case ConnectionState.done:
+          final user=FirebaseAuth.instance.currentUser;
+          if(user!=null){
+            if(user.emailVerified){
+              return MyApp();
+            }else{
+              return AuthRegisterView();
+            }
+          }else{
+            return AuthLoginView();
+          }
+          
+          default:
+          return const Text('Not succeded');
+        }
+      },
+    );
+  }
+}
+
 
 class Item{
 
@@ -91,7 +136,14 @@ class _MyAppState extends State<MyApp> {
         centerTitle: true,
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
       ),
-      drawer: Drawer(),
+      drawer: Drawer(
+        child: IconButton(onPressed: () async {
+          await FirebaseAuth.instance.signOut();
+          if(context.mounted){
+            Navigator.of(context).pushNamedAndRemoveUntil('/loginViewRoute', (_)=>false);
+          }
+        }, icon: Icon(Icons.logout)),
+      ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(30, 10, 0, 0),
         child: Column(
@@ -223,6 +275,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+
 // class MyApiTesting extends StatefulWidget {
 //   const MyApiTesting({super.key});
 
@@ -231,6 +284,10 @@ class _MyAppState extends State<MyApp> {
 // }
 
 // class _MyApiTestingState extends State<MyApiTesting> {
+//   late final TextEditingController _email;
+//   late final TextEditingController _password;
+//   late final TextEditingController _password2;
+  
 //   List<dynamic> _data = [];
 
 //   apitest() async {
@@ -249,30 +306,86 @@ class _MyAppState extends State<MyApp> {
 //     }
 //   }
 
+//   apiPost()async{
+//     final url=Uri.parse('http://192.168.0.106:8000/users/register/');
+//     final headers={'Content-Type':'application/json'};
+//     final body=convert.jsonEncode({
+//       'email':_email.text,
+//       "password":_password.text,
+//       "password2":_password2.text
+//     });
+//     final response= await http.post(url, headers: headers,body: body);
+
+//     if(response.statusCode==200){
+//       print('data is posting....');
+//       print(response.body);
+//     }else{
+//       print('ERROR: ${response.statusCode}');
+//     }
+//   }
+
+//   @override
+//   void initState() {
+//     _email=TextEditingController();
+//     _password=TextEditingController();
+//     _password2=TextEditingController();
+//     super.initState();
+//   }
+
+//   @override
+//   void dispose() {
+//     _email.dispose();
+//     _password.dispose();
+//     _password2.dispose();
+//     super.dispose();
+//   }
+
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(title: const Text('Simple Api testing')),
 //       body: Column(
 //         children: [
-//           ElevatedButton(onPressed: apitest, child: const Text('Get data')),
-//           Expanded(
-//             child: ListView.builder(
-//               itemCount: _data.length,
-//               itemBuilder: (context, index) {
-//                 final item = _data[index];
-//                 return ListTile(
-//                   leading: Icon(item['icon_url']),
-//                   title: Text(item['title']
-                  
-//                   ),
-//                 );
-//               },
+          
+//           TextField(
+//             controller: _email,
+//             decoration: InputDecoration(
+//               hintText: 'Email'
 //             ),
 //           ),
+//           TextField(
+//             controller: _password,
+//               decoration: InputDecoration(
+//               hintText: 'Password'
+//             ),
+//           ),
+//           TextField(
+//             controller: _password2,
+//              decoration: InputDecoration(
+//               hintText: 'Confirm Password'
+//             ),
+//           ),
+
+//           ElevatedButton(onPressed:apiPost, child: const Text('Post data')),
+          
+//           // Expanded(
+//           //   child: ListView.builder(
+//           //     itemCount: _data.length,
+//           //     itemBuilder: (context, index) {
+//           //       final item = _data[index];
+//           //       return ListTile(
+//           //         leading: Icon(item['icon_url']),
+//           //         title: Text(item['title']
+                  
+//           //         ),
+//           //       );
+//           //     },
+//           //   ),
+//           // ),
+      
+
 //         ],
 //       ),
 //     );
 //   }
 // }
-

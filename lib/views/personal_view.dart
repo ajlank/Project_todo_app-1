@@ -25,7 +25,7 @@ class PersonalView extends StatelessWidget {
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 200,
               // color: Colors.red,
               child: Column(
@@ -68,6 +68,7 @@ class PersonalView extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final note = notess.elementAt(index);
                      return ListTile(
+                 
                       title: Text(note.text),
                      );
                     },
