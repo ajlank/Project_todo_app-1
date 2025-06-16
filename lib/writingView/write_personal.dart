@@ -49,7 +49,7 @@ class _WritePersonalState extends State<WritePersonal> {
             ),
             IconButton(onPressed: () {
               final userText=_textController.text;
-              context.read<PersonalNoteProvider>().add(Item(text: userText));
+              context.read<PersonalNoteProvider>().createNewNote(text: userText);
             }, icon: Icon(Icons.add))
           ],
         ),

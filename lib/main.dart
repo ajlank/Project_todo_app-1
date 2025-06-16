@@ -1,5 +1,8 @@
 import 'dart:collection';
 // import 'dart:convert' as convert;
+import 'package:todoapp/cloud/cloud_note.dart';
+import 'package:todoapp/cloud/firebase_cloud_storage.dart';
+
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -81,35 +84,34 @@ class MainAppControlView extends StatelessWidget {
   }
 }
 
-
-class Item{
-
-  final String text;
-
-  const Item({required this.text});
-  
-  @override
-  String toString() {
-    return 'user note $text';
-  }
-}
 class PersonalNoteProvider extends ChangeNotifier{
+
+   final FirebaseCloudStorage cloudStorage=FirebaseCloudStorage();
    
-   final List<Item> _notes=[];
+   final List<CloudNote> _notes=[];
+
   
-  UnmodifiableListView<Item> get items => UnmodifiableListView(_notes);
+   UnmodifiableListView<dynamic> get items => UnmodifiableListView(_notes);
   
-  void add(Item item) {
-    _notes.add(item);
+   Future<CloudNote>createNewNote({required String text})async{
+    final userId=FirebaseAuth.instance.currentUser!.uid;
+    final newNotes=await cloudStorage.createNewNote(userId: userId,userText: text);
+    _notes.add(newNotes);
     notifyListeners();
+    return newNotes;
+   }
+
+  Stream<Iterable<CloudNote>>fetchNotes(){
+    final userId=FirebaseAuth.instance.currentUser!.uid;
+    final fetchedNote=cloudStorage.getAllNotes(userId: userId);
+     notifyListeners();
+     return fetchedNote;
   }
 
-
-  void removeAll() {
-    _notes.clear();
+  Future<void>deleteNote({required String documentId})async{
+    await cloudStorage.deleteNote(documentId: documentId);
     notifyListeners();
   }
-  List<Item> get notes=>_notes;
   
   
 }
@@ -217,7 +219,9 @@ class _MyAppState extends State<MyApp> {
                                       ),
                                     ),
                                     PopupMenuButton(
-                                      onSelected: (value) {},
+                                      onSelected: (value) {
+                                       
+                                      },
                                       itemBuilder: (context) {
                                         return [
                                           PopupMenuItem<MenUActions>(
