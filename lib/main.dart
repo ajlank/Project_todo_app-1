@@ -15,6 +15,8 @@ import 'package:todoapp/views/personal_view.dart';
 import 'package:todoapp/writingView/write_personal.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth;
+import 'package:intl/intl.dart';
+
 void main(){
   WidgetsFlutterBinding.ensureInitialized();
    
@@ -77,7 +79,7 @@ class MainAppControlView extends StatelessWidget {
           }
           
           default:
-          return const Text('Not succeded');
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -128,7 +130,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  DateTime get times => DateTime.now();
+  String formatDate(DateTime date){
+    return DateFormat('MMMM dd, yyyy').format(date).toUpperCase();
+  }
+  final now=DateTime.now();
+  String get currentDate=>formatDate(now);
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +181,7 @@ class _MyAppState extends State<MyApp> {
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(6, 10, 0, 0),
-                  child: Text('TODAY: $times'),
+                  child: Text('TODAY: $currentDate'),
                 ),
                 SizedBox(height: 60),
                 CarouselSlider(

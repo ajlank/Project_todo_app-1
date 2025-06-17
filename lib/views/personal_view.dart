@@ -11,8 +11,19 @@ class PersonalView extends StatefulWidget {
 }
 
 class _PersonalViewState extends State<PersonalView> {
-  bool? isChecked=false;
-  int selectedValue=0;
+  Set<int> selectedIndex = {};
+
+  bool isToday(DateTime date){
+    final now=DateTime.now();
+   
+    return date.year==now.year && date.month==now.month && date.day==now.day;
+  }
+  
+  bool isTomorrow(DateTime date){
+    final tomorrow=DateTime.now().add(Duration(days: 1));
+    return date.year==tomorrow.year && date.month==tomorrow.month && date.day==tomorrow.day;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +46,6 @@ class _PersonalViewState extends State<PersonalView> {
           children: [
             SizedBox(
               height: 200,
-              // color: Colors.red,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -70,50 +80,88 @@ class _PersonalViewState extends State<PersonalView> {
               child: Consumer<PersonalNoteProvider>(
                 builder: (context, value, child) {
                   return StreamBuilder(
-                    stream:value.fetchNotes(),
-                     builder: (context, snapshot) {
-                      switch(snapshot.connectionState){
+                    stream: value.fetchNotes(),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                         case ConnectionState.active:
-                         if(snapshot.hasData){
-                          final data=snapshot.data as Iterable<CloudNote>;
-                          return ListView.builder(
-                              itemCount: data.length,
-                              itemBuilder: (context, index) {
-                                final note=data.elementAt(index);
-                                return ListTile(
-                                  leading: Checkbox(
-                                    value: selectedValue==index,
-                                    onChanged: (value) {
-                                      if(value!){
-                                        setState(() {
-                                          selectedValue=index;
-                                        });
-                                      
-                                      }
-                                      
-                                    },
-                                  ),
-                                  title: Text(note.userText),
-                                  
-                                  trailing: (selectedValue==index)?IconButton(onPressed: () {
-                                    context.read<PersonalNoteProvider>().deleteNote(documentId: note.documentId);
-                                  }, icon: Icon(Icons.delete)):Text(''),
-                                );
-
-                              },
+                          if (snapshot.hasData) {
+                            final data = snapshot.data as Iterable<CloudNote>;
                             
-                          );
-                          
-                         }else{
-                          return const CircularProgressIndicator();
-                         }
+                            final todaysNote=data.where((note) =>isToday(note.createdAt)).toList();
+                            final tomorrowsNote=data.where((note) =>isTomorrow(note.createdAt)).toList();
+                             
+                             final combinedList=[
+                              if(todaysNote.isNotEmpty) 'Today',
+                              ...todaysNote,
+
+                              if(tomorrowsNote.isNotEmpty) 'Tomorrow',
+                              ...tomorrowsNote,
+
+                             ];
+
+                            return ListView.builder(
+                              itemCount: combinedList.length,
+                              itemBuilder: (context, index) {
+                               
+                                final item = combinedList[index];
+                                  if (item is String) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(item,
+                                          style: TextStyle(
+                                              fontSize: 13, fontWeight: FontWeight.w400)),
+                                    );
+                                  }
+                                  final note=item as CloudNote;
+                                
+                                  
+                                return Column(
+                                  children: [
+                                  
+                                    ListTile(
+                                      leading: Checkbox(
+                                        value: selectedIndex.contains(index),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (value == true) {
+                                              selectedIndex.add(index);
+                                            }else{
+                                              selectedIndex.remove(index);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                      title: Text(note.userText),
+                                     
+                                      trailing: selectedIndex.contains(index)
+                                          ? IconButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<PersonalNoteProvider>()
+                                                    .deleteNote(
+                                                      documentId: note.documentId,
+                                                    );
+                                              },
+                                              icon: Icon(Icons.delete),
+                                            )
+                                          : SizedBox.shrink(),
+                                    ),
+                                    Divider(
+                                      indent: 32.2,
+                                    )
+                                  ],
+                                );
+                              },
+                            );
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
                         default:
-                        return const CircularProgressIndicator();
-                        
-                      }  
-                     },
-                     );
+                          return const CircularProgressIndicator();
+                      }
+                    },
+                  );
                 },
               ),
             ),

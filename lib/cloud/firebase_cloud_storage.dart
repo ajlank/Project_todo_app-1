@@ -61,11 +61,12 @@ class FirebaseCloudStorage {
       });
 
       final fetchedNote = await document.get();
+      final data=fetchedNote.data() as Map<String,dynamic>;
       return CloudNote(
         documentId: fetchedNote.id,
         userId: userId,
         userText: userText,
-   
+        createdAt: (data['createdAt'] as Timestamp).toDate()
       );
     } catch (e) {
       throw CouldNotCreateNoteException();

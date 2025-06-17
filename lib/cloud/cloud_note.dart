@@ -9,17 +9,20 @@ class CloudNote {
   final String documentId;
   final String userId;
   final String userText;
-  
-  const CloudNote({required this.documentId, required this.userId, required this.userText});
+  final DateTime createdAt;
+
+  const CloudNote({required this.documentId,
+   required this.userId, required this.userText, required this.createdAt});
 
   CloudNote.fromSnapshot(QueryDocumentSnapshot<Map<String,dynamic>>snapshot):
   documentId=snapshot.id,
   userId=snapshot.data()[userIdFieldName],
-  userText=snapshot.data()[textFieldName] as String;
+  userText=snapshot.data()[textFieldName] as String,
+  createdAt=(snapshot.data()['createdAt'] as Timestamp).toDate();
  
   @override
   String toString() {
-    return '$documentId, $userId $userText';
+    return '$documentId, $userId $userText $createdAt';
   }
  
 }
