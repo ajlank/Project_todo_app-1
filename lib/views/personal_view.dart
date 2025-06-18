@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/cloud/cloud_note.dart';
+import 'package:todoapp/cloud/firebase_cloud_storage.dart';
 import 'package:todoapp/main.dart';
 
 class PersonalView extends StatefulWidget {
@@ -9,23 +11,38 @@ class PersonalView extends StatefulWidget {
   @override
   State<PersonalView> createState() => _PersonalViewState();
 }
-
+String get userId=>FirebaseAuth.instance.currentUser!.uid;
 class _PersonalViewState extends State<PersonalView> {
   Set<int> selectedIndex = {};
-
+  
   bool isToday(DateTime date){
-    final now=DateTime.now();
-   
-    return date.year==now.year && date.month==now.month && date.day==now.day;
+    final presentDay=DateTime.now();
+    final today=DateTime(presentDay.year,presentDay.month,presentDay.day);
+    final givenDataDate=DateTime(date.year,date.month,date.day);
+    
+    if(today==givenDataDate){
+      return true;
+    }else{
+      return false;
+    }
   }
   
-  bool isTomorrow(DateTime date){
-    final tomorrow=DateTime.now().add(Duration(days: 1));
-    return date.year==tomorrow.year && date.month==tomorrow.month && date.day==tomorrow.day;
+  bool isPrevious(DateTime date){
+   final presentDay=DateTime.now();
+   final previousDay=DateTime(presentDay.year,presentDay.month,presentDay.day-1);
+   final givenDataDate=DateTime(date.year,date.month,date.day);
+
+   if(previousDay==givenDataDate){
+    return true;
+   }else{
+    return false;
+   }
+  
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -57,12 +74,26 @@ class _PersonalViewState extends State<PersonalView> {
                   ),
                   SizedBox(height: 13),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
-                    child: const Text(
-                      '9 Tasks',
-                      style: TextStyle(fontSize: 13),
-                    ),
+                        padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
+                        child:FutureBuilder(
+                          future: context.read<PersonalNoteProvider>().lengthOfNote(userId: userId),
+                           builder: (context, snapshot) {
+                             if(snapshot.connectionState==ConnectionState.waiting){
+                              return Text('Loading..');
+                             }else if(snapshot.hasError){
+                              return Text('Error');
+                             }else{
+                              final count=snapshot.data??'0';
+                              return Text(
+                                  '$count Tasks',
+                                  style: TextStyle(fontSize: 13),
+                                );
+                             }     
+                           }
+                      )
                   ),
+                      
+                    
                   SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
@@ -89,14 +120,19 @@ class _PersonalViewState extends State<PersonalView> {
                             final data = snapshot.data as Iterable<CloudNote>;
                             
                             final todaysNote=data.where((note) =>isToday(note.createdAt)).toList();
-                            final tomorrowsNote=data.where((note) =>isTomorrow(note.createdAt)).toList();
+                            final previousNote=data.where((note) =>isPrevious(note.createdAt)).toList();
+                            final oldNotes=data.where((note) =>!isToday(note.createdAt) &&!isPrevious(note.createdAt)).toList();
+                            
                              
                              final combinedList=[
                               if(todaysNote.isNotEmpty) 'Today',
                               ...todaysNote,
 
-                              if(tomorrowsNote.isNotEmpty) 'Tomorrow',
-                              ...tomorrowsNote,
+                              if(previousNote.isNotEmpty) 'Previous',
+                              ...previousNote,
+                              
+                              if(oldNotes.isNotEmpty) 'Old Tasks',
+                              ...oldNotes,
 
                              ];
 
@@ -137,6 +173,7 @@ class _PersonalViewState extends State<PersonalView> {
                                       trailing: selectedIndex.contains(index)
                                           ? IconButton(
                                               onPressed: () {
+                                                
                                                 context
                                                     .read<PersonalNoteProvider>()
                                                     .deleteNote(
@@ -171,6 +208,8 @@ class _PersonalViewState extends State<PersonalView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed('/writePersonal');
+          
+          
         },
         child: Icon(Icons.add),
       ),

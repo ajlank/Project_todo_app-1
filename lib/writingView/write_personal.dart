@@ -22,6 +22,7 @@ class _WritePersonalState extends State<WritePersonal> {
   @override
   void dispose() {
     _textController.dispose();
+   
     super.dispose();
   }
 
@@ -49,7 +50,12 @@ class _WritePersonalState extends State<WritePersonal> {
             ),
             IconButton(onPressed: () {
               final userText=_textController.text;
+              if(userText.isNotEmpty){
               context.read<PersonalNoteProvider>().createNewNote(text: userText);
+             
+              }else{
+                return;
+              }
             }, icon: Icon(Icons.add))
           ],
         ),

@@ -6,6 +6,14 @@ import 'package:todoapp/cloud/cloud_storage_constants.dart';
 class FirebaseCloudStorage {
   final notes = FirebaseFirestore.instance.collection('tododaily');
 
+   Future<int>notesLength({required String userId})async{
+    try{
+      final userNote=await notes.where(userIdFieldName, isEqualTo: userId).get();
+    return userNote.docs.length;
+    }catch(e){
+      throw CouldNotGetNoteLengthException();
+    }
+   }
    Future<void> deleteNote({
     required String documentId,
   }) async {

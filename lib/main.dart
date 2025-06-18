@@ -89,15 +89,16 @@ class MainAppControlView extends StatelessWidget {
 class PersonalNoteProvider extends ChangeNotifier{
 
    final FirebaseCloudStorage cloudStorage=FirebaseCloudStorage();
-   
+ 
    final List<CloudNote> _notes=[];
-
+   
   
    UnmodifiableListView<dynamic> get items => UnmodifiableListView(_notes);
   
    Future<CloudNote>createNewNote({required String text})async{
     final userId=FirebaseAuth.instance.currentUser!.uid;
     final newNotes=await cloudStorage.createNewNote(userId: userId,userText: text);
+   
     _notes.add(newNotes);
     notifyListeners();
     return newNotes;
@@ -112,10 +113,17 @@ class PersonalNoteProvider extends ChangeNotifier{
 
   Future<void>deleteNote({required String documentId})async{
     await cloudStorage.deleteNote(documentId: documentId);
+     
     notifyListeners();
   }
-  
-  
+
+  Future<int>lengthOfNote({required String userId})async{
+    final lengtH=await cloudStorage.notesLength(userId: userId);
+    notifyListeners();
+    return lengtH;
+    
+  }
+
 }
 
 
