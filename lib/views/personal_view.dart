@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/cloud/cloud_note.dart';
-import 'package:todoapp/cloud/firebase_cloud_storage.dart';
 import 'package:todoapp/main.dart';
 
 class PersonalView extends StatefulWidget {
@@ -11,38 +10,42 @@ class PersonalView extends StatefulWidget {
   @override
   State<PersonalView> createState() => _PersonalViewState();
 }
-String get userId=>FirebaseAuth.instance.currentUser!.uid;
+
+String get userId => FirebaseAuth.instance.currentUser!.uid;
+
 class _PersonalViewState extends State<PersonalView> {
   Set<int> selectedIndex = {};
-  
-  bool isToday(DateTime date){
-    final presentDay=DateTime.now();
-    final today=DateTime(presentDay.year,presentDay.month,presentDay.day);
-    final givenDataDate=DateTime(date.year,date.month,date.day);
-    
-    if(today==givenDataDate){
+  double valuE = 0;
+  bool isToday(DateTime date) {
+    final presentDay = DateTime.now();
+    final today = DateTime(presentDay.year, presentDay.month, presentDay.day);
+    final givenDataDate = DateTime(date.year, date.month, date.day);
+
+    if (today == givenDataDate) {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
-  
-  bool isPrevious(DateTime date){
-   final presentDay=DateTime.now();
-   final previousDay=DateTime(presentDay.year,presentDay.month,presentDay.day-1);
-   final givenDataDate=DateTime(date.year,date.month,date.day);
 
-   if(previousDay==givenDataDate){
-    return true;
-   }else{
-    return false;
-   }
-  
+  bool isPrevious(DateTime date) {
+    final presentDay = DateTime.now();
+    final previousDay = DateTime(
+      presentDay.year,
+      presentDay.month,
+      presentDay.day - 1,
+    );
+    final givenDataDate = DateTime(date.year, date.month, date.day);
+
+    if (previousDay == givenDataDate) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -74,26 +77,28 @@ class _PersonalViewState extends State<PersonalView> {
                   ),
                   SizedBox(height: 13),
                   Padding(
-                        padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
-                        child:FutureBuilder(
-                          future: context.read<PersonalNoteProvider>().lengthOfNote(userId: userId),
-                           builder: (context, snapshot) {
-                             if(snapshot.connectionState==ConnectionState.waiting){
-                              return Text('Loading..');
-                             }else if(snapshot.hasError){
-                              return Text('Error');
-                             }else{
-                              final count=snapshot.data??'0';
-                              return Text(
-                                  '$count Tasks',
-                                  style: TextStyle(fontSize: 13),
-                                );
-                             }     
-                           }
-                      )
+                    padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
+                    child: FutureBuilder(
+                      future: context.read<PersonalNoteProvider>().lengthOfNote(
+                        userId: userId,
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Text('Loading..');
+                        } else if (snapshot.hasError) {
+                          return Text('Error');
+                        } else {
+                          final count = snapshot.data ?? '0';
+                          return Text(
+                            '$count Tasks',
+                            style: TextStyle(fontSize: 13),
+                          );
+                        }
+                      },
+                    ),
                   ),
-                      
-                    
+
                   SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
@@ -102,7 +107,37 @@ class _PersonalViewState extends State<PersonalView> {
                       style: TextStyle(fontSize: 20),
                     ),
                   ),
-                  Slider(value: 0.7, onChanged: (value) {}),
+
+                  Container(
+                    width: double.infinity,
+                    height: 40,
+
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              thumbShape: SliderComponentShape.noThumb,
+                            
+                            ),
+                            child: Slider(
+                              value: (valuE < 100.0) ? valuE : 100,
+                              onChanged: (value) {},
+
+                              thumbColor: Colors.blue,
+
+                              activeColor: Colors.blue,
+                              min: 0,
+                              max: 100,
+                              divisions: 10,
+                            ),
+                          ),
+                        ),
+
+                        Text('${valuE.toInt()}%'),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -118,43 +153,52 @@ class _PersonalViewState extends State<PersonalView> {
                         case ConnectionState.active:
                           if (snapshot.hasData) {
                             final data = snapshot.data as Iterable<CloudNote>;
-                            
-                            final todaysNote=data.where((note) =>isToday(note.createdAt)).toList();
-                            final previousNote=data.where((note) =>isPrevious(note.createdAt)).toList();
-                            final oldNotes=data.where((note) =>!isToday(note.createdAt) &&!isPrevious(note.createdAt)).toList();
-                            
-                             
-                             final combinedList=[
-                              if(todaysNote.isNotEmpty) 'Today',
+
+                            final todaysNote = data
+                                .where((note) => isToday(note.createdAt))
+                                .toList();
+                            final previousNote = data
+                                .where((note) => isPrevious(note.createdAt))
+                                .toList();
+                            final oldNotes = data
+                                .where(
+                                  (note) =>
+                                      !isToday(note.createdAt) &&
+                                      !isPrevious(note.createdAt),
+                                )
+                                .toList();
+
+                            final combinedList = [
+                              if (todaysNote.isNotEmpty) 'Today',
                               ...todaysNote,
 
-                              if(previousNote.isNotEmpty) 'Previous',
+                              if (previousNote.isNotEmpty) 'Previous',
                               ...previousNote,
-                              
-                              if(oldNotes.isNotEmpty) 'Old Tasks',
-                              ...oldNotes,
 
-                             ];
+                              if (oldNotes.isNotEmpty) 'Old Tasks',
+                              ...oldNotes,
+                            ];
 
                             return ListView.builder(
                               itemCount: combinedList.length,
                               itemBuilder: (context, index) {
-                               
                                 final item = combinedList[index];
-                                  if (item is String) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(item,
-                                          style: TextStyle(
-                                              fontSize: 13, fontWeight: FontWeight.w400)),
-                                    );
-                                  }
-                                  final note=item as CloudNote;
-                                
-                                  
+                                if (item is String) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      item,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                final note = item as CloudNote;
+
                                 return Column(
                                   children: [
-                                  
                                     ListTile(
                                       leading: Checkbox(
                                         value: selectedIndex.contains(index),
@@ -162,31 +206,34 @@ class _PersonalViewState extends State<PersonalView> {
                                           setState(() {
                                             if (value == true) {
                                               selectedIndex.add(index);
-                                            }else{
+                                              valuE += 10;
+                                            } else {
                                               selectedIndex.remove(index);
+                                              valuE -= 10;
                                             }
                                           });
                                         },
                                       ),
                                       title: Text(note.userText),
-                                     
+
                                       trailing: selectedIndex.contains(index)
                                           ? IconButton(
                                               onPressed: () {
-                                                
+                                               
                                                 context
-                                                    .read<PersonalNoteProvider>()
+                                                    .read<
+                                                      PersonalNoteProvider
+                                                    >()
                                                     .deleteNote(
-                                                      documentId: note.documentId,
+                                                      documentId:
+                                                          note.documentId,
                                                     );
                                               },
                                               icon: Icon(Icons.delete),
                                             )
                                           : SizedBox.shrink(),
                                     ),
-                                    Divider(
-                                      indent: 32.2,
-                                    )
+                                    Divider(indent: 32.2),
                                   ],
                                 );
                               },
@@ -208,8 +255,6 @@ class _PersonalViewState extends State<PersonalView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed('/writePersonal');
-          
-          
         },
         child: Icon(Icons.add),
       ),

@@ -21,35 +21,79 @@ void main(){
   WidgetsFlutterBinding.ensureInitialized();
    
   runApp(
-    ChangeNotifierProvider(
-      create: (context) =>PersonalNoteProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+        create: (context) =>PersonalNoteProvider()
+        ),
+        ChangeNotifierProvider(
+        create: (context) =>ThemeProvider()
+        ),
+      ],
      child: RootAPP(),
     )
    
   );
 }
 
+
+final List<ThemeData>themes=[
+ 
+ ThemeData(
+ brightness: Brightness.light,
+ 
+
+ ),
+ ThemeData(
+  brightness: Brightness.dark,
+ 
+
+ ),
+ ThemeData(
+  brightness: Brightness.light,
+  primaryColor: Colors.green,
+
+ )
+];
+
+
+class ThemeProvider extends ChangeNotifier{
+  int _currentIndex=0;
+  int get getCurrentIndex=>_currentIndex;
+   
+  ThemeData get currentTheme=>themes[_currentIndex];
+ 
+  void setCurrentIndex(int indx){
+    _currentIndex=indx;
+    notifyListeners();
+  }
+  
+  
+}
+
+
 class RootAPP extends StatelessWidget {
   const RootAPP({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 255, 171, 16),
-        ),
-      ),
-      home:MainAppControlView(),
-      routes: {
-        '/personalView': (context) => PersonalView(),
-         '/writePersonal':(context)=> WritePersonal(),
-         '/registerViewRoute':(context)=>AuthRegisterView(),
-         '/loginViewRoute':(context)=>AuthLoginView(),
-         '/myAppViewRoute':(context)=>MyApp()
-        },
+    return  Consumer<ThemeProvider>(
+      builder: (context, value, child) {
+        return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: value.currentTheme,
+           
+        home:MainAppControlView(),
+        routes: {
+          '/personalView': (context) => PersonalView(),
+           '/writePersonal':(context)=> WritePersonal(),
+           '/registerViewRoute':(context)=>AuthRegisterView(),
+           '/loginViewRoute':(context)=>AuthLoginView(),
+           '/myAppViewRoute':(context)=>MyApp()
+          },
+      );
+      }, 
     );
   }
 }
@@ -86,12 +130,13 @@ class MainAppControlView extends StatelessWidget {
   }
 }
 
+
 class PersonalNoteProvider extends ChangeNotifier{
 
    final FirebaseCloudStorage cloudStorage=FirebaseCloudStorage();
  
    final List<CloudNote> _notes=[];
-   
+
   
    UnmodifiableListView<dynamic> get items => UnmodifiableListView(_notes);
   
@@ -124,6 +169,8 @@ class PersonalNoteProvider extends ChangeNotifier{
     
   }
 
+ 
+
 }
 
 
@@ -138,12 +185,27 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  bool firstTap=false;
+  String myName='Jane';
+  late final TextEditingController _textController;
+  
   String formatDate(DateTime date){
     return DateFormat('MMMM dd, yyyy').format(date).toUpperCase();
   }
   final now=DateTime.now();
   String get currentDate=>formatDate(now);
-
+  
+ @override
+  void initState() {
+    _textController=TextEditingController();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,9 +235,43 @@ class _MyAppState extends State<MyApp> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(6, 10, 0, 0),
-                  child: const Text(
-                    'Hello, Jane',
-                    style: TextStyle(fontSize: 23),
+                  child: Consumer<PersonalNoteProvider>(
+                    builder: (context, value, child) {
+                    return GestureDetector(
+                      onTap: () {
+                      setState(() {
+                        firstTap=true;
+                      });
+                      },
+                      child:firstTap? Column(
+                        children: [
+                          TextField(
+                            controller: _textController,
+                          ),
+                          TextButton(onPressed: () {
+                            if(_textController.text.isEmpty){
+                                setState(() {
+                            firstTap=false;  
+                            });
+                              return;
+                            }else{
+                               myName=_textController.text;
+                            }
+                           
+                            setState(() {
+                            firstTap=false;  
+                            });
+                            
+                          }, child: const Text('Save'))
+                        ],
+                      ): Text(
+                        'Hello, $myName',
+                        
+                        style: TextStyle(fontSize: 23),
+                      ),
+                    );  
+                    },
+                    
                   ),
                 ),
                 Padding(
@@ -193,7 +289,16 @@ class _MyAppState extends State<MyApp> {
                 ),
                 SizedBox(height: 60),
                 CarouselSlider(
+                  
                   items: [
+                    Container(
+                      color: Colors.red,
+                      height: 400,
+                    ),  
+                    Container(
+                      color: Colors.black,
+                      height: 400,
+                    ),  
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).pushNamed("/personalView");
@@ -280,6 +385,11 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ],
                   options: CarouselOptions(
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                      context.read<ThemeProvider>().setCurrentIndex(index);
+                      });
+                    },
                     height: 400.00,
                     enlargeCenterPage: true,
                   ),
