@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todoapp/utils/constants.dart';
 
 class AuthLoginView extends StatefulWidget {
   const AuthLoginView({super.key});
@@ -57,7 +58,7 @@ class _AuthLoginViewState extends State<AuthLoginView> {
            final user=FirebaseAuth.instance.currentUser;
             if(user!.emailVerified){
                 if(context.mounted){
-                Navigator.of(context).pushNamedAndRemoveUntil('/myAppViewRoute', 
+                Navigator.of(context).pushNamedAndRemoveUntil(myAppViewRoute, 
                 (route)=>false);
               }
             } 
@@ -65,7 +66,7 @@ class _AuthLoginViewState extends State<AuthLoginView> {
             TextButton(onPressed: (){
              if(context.mounted){
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/registerViewRoute', (route)=>false);
+                registerViewRoute, (route)=>false);
              }
             }, child: const Text('Not registered yet? register here'))
           ],

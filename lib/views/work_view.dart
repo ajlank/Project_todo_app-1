@@ -1,20 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/cloud1/cloud_note.dart';
-import 'package:todoapp/statemanagement/personal_note_provider.dart';
+import 'package:todoapp/statemanagement/work_note_provider.dart';
 import 'package:todoapp/utils/constants.dart';
+import 'package:todoapp/views/personal_view.dart';
 
-class PersonalView extends StatefulWidget {
-  const PersonalView({super.key});
+class WorkView extends StatefulWidget {
+  const WorkView({super.key});
 
   @override
-  State<PersonalView> createState() => _PersonalViewState();
+  State<WorkView> createState() => _WorkViewState();
 }
 
-String get userId => FirebaseAuth.instance.currentUser!.uid;
-
-class _PersonalViewState extends State<PersonalView> {
+class _WorkViewState extends State<WorkView> {
   Set<int> selectedIndex = {};
   double valuE = 0;
   bool isToday(DateTime date) {
@@ -80,7 +78,7 @@ class _PersonalViewState extends State<PersonalView> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
                     child: FutureBuilder(
-                      future: context.read<PersonalNoteProvider>().lengthOfNote(
+                      future: context.read<WorkNoteProvider>().lengthOfNote(
                         userId: userId,
                       ),
                       builder: (context, snapshot) {
@@ -104,7 +102,7 @@ class _PersonalViewState extends State<PersonalView> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
                     child: const Text(
-                      'Personal',
+                      'Work',
                       style: TextStyle(fontSize: 20),
                     ),
                   ),
@@ -119,7 +117,6 @@ class _PersonalViewState extends State<PersonalView> {
                           child: SliderTheme(
                             data: SliderTheme.of(context).copyWith(
                               thumbShape: SliderComponentShape.noThumb,
-                            
                             ),
                             child: Slider(
                               value: (valuE < 100.0) ? valuE : 100,
@@ -144,7 +141,7 @@ class _PersonalViewState extends State<PersonalView> {
             ),
 
             Expanded(
-              child: Consumer<PersonalNoteProvider>(
+              child: Consumer<WorkNoteProvider>(
                 builder: (context, value, child) {
                   return StreamBuilder(
                     stream: value.fetchNotes(),
@@ -220,10 +217,9 @@ class _PersonalViewState extends State<PersonalView> {
                                       trailing: selectedIndex.contains(index)
                                           ? IconButton(
                                               onPressed: () {
-                                               
                                                 context
                                                     .read<
-                                                      PersonalNoteProvider
+                                                      WorkNoteProvider
                                                     >()
                                                     .deleteNote(
                                                       documentId:
@@ -255,7 +251,7 @@ class _PersonalViewState extends State<PersonalView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(writePersonalViewRoute);
+          Navigator.of(context).pushNamed(writeWorkViewRoute);
         },
         child: Icon(Icons.add),
       ),

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todoapp/utils/constants.dart';
 
 class AuthRegisterView extends StatefulWidget {
   const AuthRegisterView({super.key});
@@ -55,7 +56,7 @@ class _AuthRegisterViewState extends State<AuthRegisterView> {
               final user=FirebaseAuth.instance.currentUser;
               await user!.sendEmailVerification();
               if(context.mounted){
-                Navigator.of(context).pushNamedAndRemoveUntil('/loginViewRoute', 
+                Navigator.of(context).pushNamedAndRemoveUntil(loginViewRoute, 
                 (route)=>false);
               }
              }on FirebaseAuthException catch (e){
@@ -78,7 +79,7 @@ class _AuthRegisterViewState extends State<AuthRegisterView> {
               onPressed: () {
                 if (context.mounted) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/loginViewRoute',
+                    loginViewRoute,
                     (route) => false,
                   );
                 }

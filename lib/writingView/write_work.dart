@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todoapp/statemanagement/personal_note_provider.dart';
+import 'package:todoapp/statemanagement/work_note_provider.dart';
 
-class WritePersonal extends StatefulWidget {
-  const WritePersonal({super.key});
+class WriteWork extends StatefulWidget {
+  const WriteWork({super.key});
 
   @override
-  State<WritePersonal> createState() => _WritePersonalState();
+  State<WriteWork> createState() => _WriteWorkState();
 }
 
-class _WritePersonalState extends State<WritePersonal> {
-
+class _WriteWorkState extends State<WriteWork> {
   late final TextEditingController _textController;
 
   @override
@@ -51,8 +50,7 @@ class _WritePersonalState extends State<WritePersonal> {
             IconButton(onPressed: () {
               final userText=_textController.text;
               if(userText.isNotEmpty){
-              context.read<PersonalNoteProvider>().createNewNote(text: userText);
-             
+              context.read<WorkNoteProvider>().createNewNote(text: userText);
               }else{
                 return;
               }

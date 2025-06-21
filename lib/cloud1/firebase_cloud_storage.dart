@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:todoapp/cloud/cloud_note.dart';
-import 'package:todoapp/cloud/cloud_note_excpetion.dart';
-import 'package:todoapp/cloud/cloud_storage_constants.dart';
+import 'package:todoapp/cloud1/cloud_note.dart';
+import 'package:todoapp/cloud1/cloud_note_excpetion.dart';
+import 'package:todoapp/cloud1/cloud_storage_constants.dart';
 
 class FirebaseCloudStorage {
    final notes = FirebaseFirestore.instance.collection('tododaily');
@@ -80,4 +80,8 @@ class FirebaseCloudStorage {
       throw CouldNotCreateNoteException();
     }
   }
+ static final FirebaseCloudStorage _shared= FirebaseCloudStorage._sharedInstance();
+  FirebaseCloudStorage._sharedInstance();
+  factory FirebaseCloudStorage ()=>_shared;
+
 }

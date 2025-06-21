@@ -1,0 +1,1 @@
+enum MenUActions { delete }
