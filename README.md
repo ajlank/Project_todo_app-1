@@ -9,9 +9,9 @@ A simple and clean Flutter-based **Todo App** designed to help users manage dail
 - 🔐 **User Registration & Login** (via Firebase Auth)
 - 🗂️ **Categorized Tasks**  
   Users can add tasks under different categories like:
-  - `tododaily`
-  - `workdaily`
-  - `familytask`
+  - `Daily Tasks`
+  - `Daily Work`
+  - `Family Task`
 - 🗑️ **Delete Tasks**  
   Tasks can be deleted easily when completed or no longer needed.
 - 📅 **Daily Remaining Tasks**  
