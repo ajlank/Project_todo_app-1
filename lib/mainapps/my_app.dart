@@ -86,9 +86,15 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                    ),
+                    child: ClipRRect(
+                     borderRadius: BorderRadius.circular(80),
+                      child: Image(
+                      image: AssetImage('lib/assets/images/profile.jpg'),
+                      height: 60,
+                      width: 60,
+                      fit: BoxFit.fill,
+                      ),
+                    )
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(6, 10, 0, 0),
