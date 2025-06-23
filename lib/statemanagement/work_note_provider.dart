@@ -7,7 +7,7 @@ import 'package:todoapp/cloud2/firebase_work_cloud_storage.dart';
 
 class WorkNoteProvider extends ChangeNotifier{
   final FirebaseWorkCloudStorage cloudStorage=FirebaseWorkCloudStorage();
- 
+  int totalWorkTask=0;
    final List<CloudNote> _notes=[];
 
   
@@ -38,8 +38,10 @@ class WorkNoteProvider extends ChangeNotifier{
   Future<int>lengthOfNote({required String userId})async{
     final lengtH=await cloudStorage.notesLength(userId: userId);
     notifyListeners();
+    totalWorkTask=lengtH;
     return lengtH;
     
   }
+  int get getTotalWorkTask=>totalWorkTask;
 
 }

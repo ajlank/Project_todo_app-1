@@ -1,5 +1,6 @@
 // import 'dart:convert' as convert;
 import 'package:todoapp/mainapps/root_app.dart';
+import 'package:todoapp/statemanagement/family_task_note_provider.dart';
 import 'package:todoapp/statemanagement/personal_note_provider.dart';
 import 'package:todoapp/statemanagement/theme_provider.dart';
 import 'package:todoapp/statemanagement/work_note_provider.dart';
@@ -21,6 +22,9 @@ void main(){
         ChangeNotifierProvider(
           create:(context) => WorkNoteProvider(), 
         ),
+        ChangeNotifierProvider(
+          create:(context) =>FamilyTaskNoteProvider(),
+        )
       ],
      child: RootAPP(),
     )

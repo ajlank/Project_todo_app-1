@@ -4,8 +4,10 @@ import 'package:todoapp/authentication_firebase/auth_register_view.dart';
 import 'package:todoapp/mainapps/main_app_control_view.dart';
 import 'package:todoapp/mainapps/my_app.dart';
 import 'package:todoapp/utils/constants.dart';
+import 'package:todoapp/views/family_view.dart';
 import 'package:todoapp/views/personal_view.dart';
 import 'package:todoapp/views/work_view.dart';
+import 'package:todoapp/writingView/write_family_task.dart';
 import 'package:todoapp/writingView/write_personal.dart';
 import 'package:todoapp/writingView/write_work.dart';
 
@@ -24,13 +26,15 @@ class RootAPP extends StatelessWidget {
            
         home:MainAppControlView(),
         routes: {
-          personalViewRoute: (context) => PersonalView(),
-          workViewRoute:(context)=>WorkView(),
+           personalViewRoute: (context) => PersonalView(),
+           workViewRoute:(context)=>WorkView(),
            writePersonalViewRoute:(context)=> WritePersonal(),
            writeWorkViewRoute:(context)=>WriteWork(),
            registerViewRoute:(context)=>AuthRegisterView(),
            loginViewRoute:(context)=>AuthLoginView(),
            myAppViewRoute:(context)=>MyApp(),
+           familyViewRoute:(context)=>FamilyView(),
+           writeFamilyViewRoute:(context)=>WriteFamilyTask(),
           },
       );
   }

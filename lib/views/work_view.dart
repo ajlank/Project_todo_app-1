@@ -71,7 +71,7 @@ class _WorkViewState extends State<WorkView> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(17, 0, 0, 0),
                     child: CircleAvatar(
-                      child: Icon(Icons.person, color: Colors.deepOrange),
+                      child: Icon(Icons.person),
                     ),
                   ),
                   SizedBox(height: 13),

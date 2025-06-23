@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todoapp/enums/menu_item.dart';
+import 'package:todoapp/statemanagement/personal_note_provider.dart';
+import 'package:todoapp/utils/constants.dart';
+import 'package:todoapp/views/personal_view.dart';
 
 class SliderItem1 extends StatelessWidget {
   const SliderItem1({super.key});
 
   @override
   Widget build(BuildContext context) {
+   double valuE = 50;
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed("/personalView");
+        Navigator.of(context).pushNamed(personalViewRoute);
       },
       child: Container(
         height: 400,
@@ -38,7 +43,7 @@ class SliderItem1 extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CircleAvatar(
-                      child: Icon(Icons.person, color: Colors.deepOrange),
+                      child: Icon(Icons.person),
                     ),
                     PopupMenuButton(
                       onSelected: (value) {},
@@ -61,14 +66,40 @@ class SliderItem1 extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('9 Tasks', style: TextStyle(fontSize: 9)),
+                     FutureBuilder(
+                     future: context.read<PersonalNoteProvider>().lengthOfNote(userId: userId), 
+                     builder: (context, snapshot) {
+                       if(snapshot.connectionState==ConnectionState.waiting){
+                         return Text('Loadig...', style: TextStyle(fontSize: 9));
+                       }else if(snapshot.hasError){
+                         return Text('Error', style: TextStyle(fontSize: 9));
+                       }else{
+                        final count=snapshot.data??0;
+                        return Text('$count Tasks', style: TextStyle(fontSize: 9));
+                       }
+                     },),
                       const Text('Personal', style: TextStyle(fontSize: 15)),
-                      Slider(
-                        value: 0.7,
-                        onChanged: (value) {
+                       SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              thumbShape: SliderComponentShape.noThumb,
+                            ),
+                            child: Slider(
+                              value: valuE,
+                              
+                              onChanged: (value) {
+                             
+                              },
+
+                              thumbColor: Colors.blue,
+
+                              activeColor: Colors.blue,
+                              min: 0,
+                              max: 100,
+                              divisions: 10,
+                            ),
+                            
+                          ),
                           
-                        },
-                      ),
                     ],
                   ),
                 ),

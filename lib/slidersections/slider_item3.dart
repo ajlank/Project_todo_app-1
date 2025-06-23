@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/enums/menu_item.dart';
-import 'package:todoapp/statemanagement/work_note_provider.dart';
+import 'package:todoapp/statemanagement/family_task_note_provider.dart';
 import 'package:todoapp/utils/constants.dart';
 import 'package:todoapp/views/personal_view.dart';
 
-class SliderItem2 extends StatelessWidget {
-  const SliderItem2({super.key});
+class SliderItem3 extends StatelessWidget {
+  const SliderItem3({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double valuE=50;
+    double valuE=60;
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(workViewRoute);
+        Navigator.of(context).pushNamed(familyViewRoute);
       },
       child: Container(
         height: 400,
@@ -43,7 +43,7 @@ class SliderItem2 extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CircleAvatar(
-                      child: Icon(Icons.work),
+                      child: Icon(Icons.family_restroom_rounded),
                     ),
                     PopupMenuButton(
                       onSelected: (value) {},
@@ -66,23 +66,22 @@ class SliderItem2 extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FutureBuilder(
-                      future:context.read<WorkNoteProvider>().lengthOfNote(userId: userId), 
+                     FutureBuilder(
+                      future: context.read<FamilyTaskNoteProvider>().lengthOfNote(userId: userId), 
                       builder:(context, snapshot) {
-                       
-                       if(snapshot.connectionState==ConnectionState.waiting){
-                        return Text('Loading...', style: TextStyle(fontSize: 9));
-                       }else if(snapshot.hasError){
-                       return Text('Error...', style: TextStyle(fontSize: 9)); 
-                       }else{
-                        final count=snapshot.data??0;
-                        return Text('$count Tasks', style: TextStyle(fontSize: 9));
-                       }
-
-                      },
+                        if(snapshot.connectionState==ConnectionState.waiting){
+                            return Text('Loding..', style: TextStyle(fontSize: 9));
+                        }else if(snapshot.hasError){
+                            return Text('Error..', style: TextStyle(fontSize: 9));
+                        }else{
+                         final count=snapshot.data??0;
+                         return Text('$count Tasks', style: TextStyle(fontSize: 9));
+                        }
+                
+                      }, 
                       ),
-                      const Text('Work', style: TextStyle(fontSize: 15)),
-                       SliderTheme(
+                      const Text('Family', style: TextStyle(fontSize: 15)),
+                    SliderTheme(
                             data: SliderTheme.of(context).copyWith(
                               thumbShape: SliderComponentShape.noThumb,
                             ),

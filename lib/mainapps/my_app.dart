@@ -5,8 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/slidersections/slider_item1.dart';
 import 'package:todoapp/slidersections/slider_item2.dart';
+import 'package:todoapp/slidersections/slider_item3.dart';
+import 'package:todoapp/statemanagement/family_task_note_provider.dart';
+import 'package:todoapp/statemanagement/personal_note_provider.dart';
 import 'package:todoapp/statemanagement/theme_provider.dart';
+import 'package:todoapp/statemanagement/work_note_provider.dart';
 import 'package:todoapp/utils/cl_dr.dart';
+import 'package:todoapp/utils/constants.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -41,10 +46,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
   
   final themeIndex=context.watch<ThemeProvider>().getCurrentIndex;
-
+  
   final backgroundColors=[
     Color(0xFFA8DADC),
-    Color(0xFFEDE7F6), 
+    Color.fromARGB(255, 87, 74, 105), 
     Color(0xFFF6D186), 
   ];
 
@@ -59,10 +64,12 @@ class _MyAppState extends State<MyApp> {
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
       ),
       drawer: Drawer(
+        backgroundColor: Colors.white,
+         
         child: IconButton(onPressed: () async {
           await FirebaseAuth.instance.signOut();
           if(context.mounted){
-            Navigator.of(context).pushNamedAndRemoveUntil('/loginViewRoute', (_)=>false);
+            Navigator.of(context).pushNamedAndRemoveUntil(loginViewRoute, (_)=>false);
           }
         }, icon: Icon(Icons.logout)),
       ),
@@ -79,7 +86,9 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
-                    child: CircleAvatar(),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(6, 10, 0, 0),
@@ -128,7 +137,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(6, 3, 0, 0),
-                    child: Text('You have 3 tasks to do today',style: TextStyle(
+                    child: Text('You have ${context.read<PersonalNoteProvider>().gettotalPersonalTask+context.read<WorkNoteProvider>().getTotalWorkTask+context.read<FamilyTaskNoteProvider>().getTotalFamilyTask} tasks to do today',style: TextStyle(
                       color:defaultColor,
                       fontWeight: FontWeight.w500
                     ),
@@ -147,7 +156,8 @@ class _MyAppState extends State<MyApp> {
                     
                     items: [
                       SliderItem1(),
-                      SliderItem2()
+                      SliderItem2(),
+                      SliderItem3()
                     ],
                     options: CarouselOptions(
                       onPageChanged: (index, reason) {

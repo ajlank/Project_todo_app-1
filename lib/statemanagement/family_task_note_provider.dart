@@ -1,14 +1,13 @@
 import 'dart:collection';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todoapp/cloud1/cloud_note.dart';
-import 'package:todoapp/cloud1/firebase_cloud_storage.dart';
+import 'package:todoapp/cloud3/firebase_family_cloud_storage.dart';
 
-class PersonalNoteProvider extends ChangeNotifier{
+class FamilyTaskNoteProvider extends ChangeNotifier{
 
-   final FirebaseCloudStorage cloudStorage=FirebaseCloudStorage();
-   int totalPersonalTask=0;
+   final FirebaseFamilyCloudStorage cloudStorage=FirebaseFamilyCloudStorage();
+   int totalFamilyTask=0;
    final List<CloudNote> _notes=[];
 
   
@@ -38,12 +37,13 @@ class PersonalNoteProvider extends ChangeNotifier{
 
   Future<int>lengthOfNote({required String userId})async{
     final lengtH=await cloudStorage.notesLength(userId: userId);
-    totalPersonalTask=lengtH;
+    totalFamilyTask=lengtH;
     notifyListeners();
     return lengtH;
     
   }
-
- int get gettotalPersonalTask=>totalPersonalTask;
+ 
+ int get getTotalFamilyTask=>totalFamilyTask;
+ 
 
 }

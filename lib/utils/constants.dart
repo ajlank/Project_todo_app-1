@@ -5,3 +5,5 @@ const writeWorkViewRoute='/writeWork';
 const registerViewRoute= '/registerViewRoute';
 const loginViewRoute= '/loginViewRoute';
 const myAppViewRoute='/myAppViewRoute';
+const familyViewRoute='/familyViewRoute';
+const writeFamilyViewRoute='/writeFamilyViewRoute';
