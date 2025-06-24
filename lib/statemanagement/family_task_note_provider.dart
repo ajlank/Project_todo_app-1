@@ -8,6 +8,8 @@ class FamilyTaskNoteProvider extends ChangeNotifier{
 
    final FirebaseFamilyCloudStorage cloudStorage=FirebaseFamilyCloudStorage();
    int totalFamilyTask=0;
+   String errorTextEmail='';
+   String errorTextPassword='';
    final List<CloudNote> _notes=[];
 
   
@@ -45,5 +47,14 @@ class FamilyTaskNoteProvider extends ChangeNotifier{
  
  int get getTotalFamilyTask=>totalFamilyTask;
  
-
+ void addErrorTextEmaikl(String text){
+  errorTextEmail=text;
+  notifyListeners();
+ }
+ void addErrorTextPassword(String text){
+  errorTextPassword=text;
+  notifyListeners();
+ }
+ String get getErrorMessageEmail=>errorTextEmail;
+String get getErrorMessagePass=>errorTextPassword;
 }

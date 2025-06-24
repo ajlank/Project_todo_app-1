@@ -7,6 +7,12 @@ A simple and clean Flutter-based **Todo App** designed to help users manage dail
 
 Below are some screenshots demonstrating the app in action:
 
+### 🔐 Registration View
+![Registration View](lib/assets//screenshots/6.png)
+
+### 🔑 Login View
+![Login View](lib/assets//screenshots/7.png)
+
 ### 🏠 Home Screen
 ![Home Screen](lib/assets/screenshots/1.png)
 

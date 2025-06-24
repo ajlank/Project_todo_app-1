@@ -7,3 +7,4 @@ const loginViewRoute= '/loginViewRoute';
 const myAppViewRoute='/myAppViewRoute';
 const familyViewRoute='/familyViewRoute';
 const writeFamilyViewRoute='/writeFamilyViewRoute';
+const emailVerificationViewRoute='/verifyEmailView';

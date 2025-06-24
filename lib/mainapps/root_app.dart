@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todoapp/authentication_firebase/auth_login_view.dart';
 import 'package:todoapp/authentication_firebase/auth_register_view.dart';
+import 'package:todoapp/authentication_firebase/email_verification_center.dart';
 import 'package:todoapp/mainapps/main_app_control_view.dart';
 import 'package:todoapp/mainapps/my_app.dart';
 import 'package:todoapp/utils/constants.dart';
@@ -35,6 +36,7 @@ class RootAPP extends StatelessWidget {
            myAppViewRoute:(context)=>MyApp(),
            familyViewRoute:(context)=>FamilyView(),
            writeFamilyViewRoute:(context)=>WriteFamilyTask(),
+           emailVerificationViewRoute:(context)=>EmailVerificationCenter()
           },
       );
   }
