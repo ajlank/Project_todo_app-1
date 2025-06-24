@@ -48,15 +48,17 @@ class _WritePersonalState extends State<WritePersonal> {
               maxLines: null,
             
             ),
-            IconButton(onPressed: () {
-              final userText=_textController.text;
-              if(userText.isNotEmpty){
-              context.read<PersonalNoteProvider>().createNewNote(text: userText);
-             
-              }else{
-                return;
-              }
-            }, icon: Icon(Icons.add))
+            Center(
+              child: IconButton(onPressed: () {
+                final userText=_textController.text;
+                if(userText.isNotEmpty){
+                context.read<PersonalNoteProvider>().createNewNote(text: userText);
+               
+                }else{
+                  return;
+                }
+              }, icon: Icon(Icons.add)),
+            )
           ],
         ),
       ),

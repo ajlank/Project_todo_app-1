@@ -47,14 +47,16 @@ class _WriteWorkState extends State<WriteWork> {
               maxLines: null,
             
             ),
-            IconButton(onPressed: () {
-              final userText=_textController.text;
-              if(userText.isNotEmpty){
-              context.read<WorkNoteProvider>().createNewNote(text: userText);
-              }else{
-                return;
-              }
-            }, icon: Icon(Icons.add))
+            Center(
+              child: IconButton(onPressed: () {
+                final userText=_textController.text;
+                if(userText.isNotEmpty){
+                context.read<WorkNoteProvider>().createNewNote(text: userText);
+                }else{
+                  return;
+                }
+              }, icon: Icon(Icons.add)),
+            )
           ],
         ),
       ),

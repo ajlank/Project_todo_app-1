@@ -48,14 +48,16 @@ class _WriteFamilyTaskState extends State<WriteFamilyTask> {
               maxLines: null,
             
             ),
-            IconButton(onPressed: () {
-              final userText=_textController.text;
-              if(userText.isNotEmpty){
-               context.read<FamilyTaskNoteProvider>().createNewNote(text: userText);
-              }else{
-                return;
-              }
-            }, icon: Icon(Icons.add))
+            Center(
+              child: IconButton(onPressed: () {
+                final userText=_textController.text;
+                if(userText.isNotEmpty){
+                 context.read<FamilyTaskNoteProvider>().createNewNote(text: userText);
+                }else{
+                  return;
+                }
+              }, icon: Icon(Icons.add)),
+            )
           ],
         ),
       ),
