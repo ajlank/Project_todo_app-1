@@ -107,7 +107,7 @@ class _AuthLoginViewState extends State<AuthLoginView> {
                     );
                   }
                 },
-                child: const Text('Already registered? login here'),
+                child: const Text('Not registered yet? register here'),
               ),
             ],
           );   
