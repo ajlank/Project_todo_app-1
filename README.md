@@ -8,17 +8,17 @@ A simple and clean Flutter-based **Todo App** designed to help users manage dail
 Below are some screenshots demonstrating the app in action:
 
 ### 🏠 Home Screen
-![Home Screen](screenshots/1.png)
+![Home Screen](lib/assets/screenshots/1.png)
 
-![Home Screen](screenshots/2.png)
+![Home Screen](lib/assets/screenshots/2.png)
 
-![Home Screen](screenshots/3.png)
+![Home Screen](lib/assets/screenshots/3.png)
 
 ### ➕ Add Task
-![Task List](screenshots/4.png)
+![Task List](lib/assets/screenshots/4.png)
 
 ### 📝 Task List
-![Task List](screenshots/5.png)
+![Task List](lib/assets/screenshots/5.png)
 
 ## 🚀 Features
 
