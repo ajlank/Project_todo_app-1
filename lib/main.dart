@@ -1,4 +1,5 @@
 // import 'dart:convert' as convert;
+import 'package:get_storage/get_storage.dart';
 import 'package:todoapp/mainapps/root_app.dart';
 import 'package:todoapp/statemanagement/family_task_note_provider.dart';
 import 'package:todoapp/statemanagement/personal_note_provider.dart';
@@ -7,9 +8,9 @@ import 'package:todoapp/statemanagement/work_note_provider.dart';
 import 'package:flutter/material.dart';
 // import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-void main(){
+void main()async{
   WidgetsFlutterBinding.ensureInitialized();
-   
+  await GetStorage.init();
   runApp(
     MultiProvider(
       providers: [

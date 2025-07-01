@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/slidersections/slider_item1.dart';
@@ -117,6 +118,7 @@ class _MyAppState extends State<MyApp> {
                                 return;
                               }else{
                                  myName=_textController.text;
+                                 GetStorage().write('userName', myName);
                               }
                              
                               setState(() {
@@ -126,7 +128,7 @@ class _MyAppState extends State<MyApp> {
                             }, child: const Text('Save'))
                           ],
                         ): Text(
-                          'Hello, $myName',
+                          'Hello, ${GetStorage().read('userName')}',
                           
                           style: TextStyle(fontSize: 23,color: defaultColor, fontWeight: defaultWeight),
                         ),

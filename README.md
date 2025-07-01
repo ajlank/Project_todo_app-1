@@ -51,6 +51,7 @@ This app is built using the following Flutter packages:
 - [`firebase_analytics`](https://pub.dev/packages/firebase_analytics)
 - [`provider`](https://pub.dev/packages/provider)
 - [`intl`](https://pub.dev/packages/intl)
+- [`get_storage`](https://pub.dev/documentation/get_storage/latest/)
 
 ---
 
